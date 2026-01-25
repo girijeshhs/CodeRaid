@@ -2,28 +2,85 @@ import { ProfileSnapshot, SnapshotStats } from "./types";
 
 const normalizeHandle = (handle: string) => handle.trim().toLowerCase();
 
+type LeetCodeStats = {
+  data?: {
+    matchedUser?: {
+      submitStats?: {
+        acSubmissionNum?: Array<{ difficulty: string; count: number }>;
+      };
+      profile?: {
+        ranking?: number;
+        reputation?: number;
+      };
+    };
+    userContestRanking?: {
+      rating?: number;
+    };
+  };
+  errors?: Array<{ message: string }>;
+};
+
+const GRAPHQL_ENDPOINT = "https://leetcode.com/graphql";
+
 export const profileFetcher = {
   async fetchPublicProfile(handle: string): Promise<ProfileSnapshot> {
     const sanitized = normalizeHandle(handle);
-    // Placeholder public-data fetcher: deterministic synthetic stats so the app stays runnable
-    // without external calls. Replace with real LeetCode scraping/GraphQL when ready.
-    const today = new Date();
-    const base = seedFromHandle(sanitized);
-    const dayOffset = Math.floor(today.getTime() / 86_400_000) % 5;
+    const body = JSON.stringify({
+      query: `query getUserProfile($username: String!) {
+        matchedUser(username: $username) {
+          submitStats {
+            acSubmissionNum {
+              difficulty
+              count
+            }
+          }
+          profile {
+            ranking
+            reputation
+          }
+        }
+        userContestRanking(username: $username) {
+          rating
+        }
+      }`,
+      variables: { username: sanitized },
+    });
 
-    const total = base + 20 + dayOffset * 2;
-    const easy = Math.max(0, Math.floor(total * 0.45));
-    const medium = Math.max(0, Math.floor(total * 0.4));
-    const hard = Math.max(0, total - easy - medium);
+    const response = await fetch(GRAPHQL_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`LeetCode fetch failed (${response.status})`);
+    }
+
+    const payload = (await response.json()) as LeetCodeStats;
+    if (payload.errors?.length) {
+      throw new Error(payload.errors.map((e) => e.message).join(", "));
+    }
+
+    const counts = payload.data?.matchedUser?.submitStats?.acSubmissionNum ?? [];
+    const total = findDifficulty(counts, "All");
+    const easy = findDifficulty(counts, "Easy");
+    const medium = findDifficulty(counts, "Medium");
+    const hard = findDifficulty(counts, "Hard");
 
     const stats: SnapshotStats = {
-      takenFor: today,
+      takenFor: new Date(),
       total,
       easy,
       medium,
       hard,
-      topics: sampleTopics(total, base),
-      contests: { rating: 1500 + base * 3 },
+      contests: {
+        rating: payload.data?.userContestRanking?.rating ?? null,
+        ranking: payload.data?.matchedUser?.profile?.ranking ?? null,
+        reputation: payload.data?.matchedUser?.profile?.reputation ?? null,
+      },
     };
 
     return {
@@ -42,15 +99,9 @@ export const profileFetcher = {
   },
 };
 
-const seedFromHandle = (handle: string) => {
-  return handle.split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % 50;
-};
-
-const sampleTopics = (total: number, seed: number) => {
-  const spread = Math.max(1, Math.floor(total / 10));
-  return [
-    { slug: "arrays", solved: spread + (seed % 3), total: 60 },
-    { slug: "graphs", solved: spread - 1, total: 40 },
-    { slug: "dp", solved: Math.max(0, spread - 2), total: 50 },
-  ];
+const findDifficulty = (
+  items: Array<{ difficulty: string; count: number }>,
+  difficulty: string
+) => {
+  return items.find((entry) => entry.difficulty === difficulty)?.count ?? 0;
 };

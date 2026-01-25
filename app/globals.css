@@ -1,15 +1,16 @@
 :root {
-  --bg: #0a0c10;
-  --bg-alt: #0f172a;
-  --panel: #0f1118;
-  --panel-strong: #141826;
-  --border: #1f2435;
-  --glow: #5ce1ff;
-  --accent: #facc15;
-  --muted: #8aa0b4;
-  --text: #e7edf5;
-  --danger: #f87171;
-  --success: #34d399;
+  --bg: #1a1a1a;
+  --panel: #262626;
+  --border: #3a3a3a;
+  --text: #eff1f6bf;
+  --text-secondary: #a3a3a3;
+  --text-tertiary: #737373;
+  --accent: #ffa116;
+  --accent-hover: #ffb84d;
+  --easy: #00b8a3;
+  --medium: #ffc01e;
+  --hard: #ef4743;
+  --hover: #303030;
 }
 
 * {
@@ -27,15 +28,16 @@ body {
 .theme-base {
   color: var(--text);
   background: var(--bg);
-  font-family: var(--font-space-mono), monospace;
+  font-family: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.08) 1px, transparent 0),
-    linear-gradient(135deg, rgba(92, 225, 255, 0.07) 0%, rgba(10, 12, 16, 0.2) 60%),
-    linear-gradient(180deg, rgba(10, 12, 16, 0.8) 0%, rgba(10, 12, 16, 0.95) 70%);
-  background-size: 22px 22px, 100% 100%, 100% 100%;
+}
+
+.mono {
+  font-family: var(--font-space-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 .site-nav {
@@ -45,39 +47,38 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
+  padding: 0 24px;
+  height: 50px;
   border-bottom: 1px solid var(--border);
-  background: rgba(10, 12, 16, 0.9);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  background: var(--panel);
 }
 
 .site-nav nav {
   display: flex;
-  gap: 12px;
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.site-nav a {
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid transparent;
-}
-
-.site-nav a:hover {
-  border-color: var(--border);
+  gap: 24px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text);
 }
 
+.site-nav a {
+  padding: 6px 0;
+  transition: color 0.2s;
+}
+
+.site-nav a:hover {
+  color: var(--accent);
+}
+
 .site-brand {
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--glow);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--text);
 }
 
 .site-main {
-  padding: 0 0 48px;
+  padding: 0 0 32px;
 }
 
 a {

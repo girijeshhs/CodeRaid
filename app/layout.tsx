@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
-import { Space_Mono } from "next/font/google";
+import { Inter, Space_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 const spaceMono = Space_Mono({
   weight: ["400", "700"],
@@ -22,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceMono.variable} theme-base`}>
+      <body className={`${inter.variable} ${spaceMono.variable} theme-base`}>
         <header className="site-nav">
           <div className="site-brand">CodeRaid</div>
           <nav>

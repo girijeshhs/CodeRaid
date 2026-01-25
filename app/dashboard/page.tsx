@@ -1,8 +1,9 @@
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
 import { prisma } from "@/lib/prisma";
 import { recommendationEngine } from "@/lib/recommendation-engine";
 import { requireUserId } from "@/lib/session";
 import { simulateSnapshotAction } from "../actions";
+import { partyAggregator } from "@/lib/party-aggregator";
 import styles from "./dashboard.module.css";
 
 export default async function DashboardPage() {
@@ -27,72 +28,120 @@ export default async function DashboardPage() {
 
   const latestSnapshot = user.snapshots[0];
   const recs = recommendationEngine.build(user.progresses, latestSnapshot);
+  const totals = latestSnapshot
+    ? {
+        easy: latestSnapshot.easy,
+        medium: latestSnapshot.medium,
+        hard: latestSnapshot.hard,
+        total: latestSnapshot.total,
+      }
+    : { easy: 0, medium: 0, hard: 0, total: 0 };
+
+  const latestDelta = user.progresses[0];
+  const streakStatus = latestDelta
+    ? latestDelta.totalDelta > 0
+      ? "Continue"
+      : "Broken"
+    : "Reset";
+
+  const daysSince = latestDelta ? differenceInDays(new Date(), latestDelta.day) : null;
+  const partyAggregate = partyAggregator.summarize(
+    user.memberships.map((member) => ({
+      userId: member.userId,
+      displayName: member.party.name,
+      deltas: user.progresses,
+      xp: user.xp,
+    }))
+  );
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.heading}>Dashboard</h1>
-
-      <div className={styles.grid}>
-        <div className={styles.card}>
-          <div className={styles.cardTitle}>XP</div>
-          <div className={styles.metric}>{user.xp}</div>
-          <div className={styles.subtext}>Level {user.level}</div>
-        </div>
-        <div className={styles.card}>
-          <div className={styles.cardTitle}>Streak</div>
-          <div className={styles.metric}>{user.streakCount} days</div>
-          <div className={styles.subtext}>Last snapshot {latestSnapshot ? format(latestSnapshot.takenFor, "MMM d") : "n/a"}</div>
-        </div>
-        <div className={styles.card}>
-          <div className={styles.cardTitle}>Handle</div>
-          <div className={styles.metric}>{user.handle}</div>
-          <div className={styles.subtext}>{user.email ?? "no email"}</div>
-        </div>
-        <div className={styles.card}>
-          <div className={styles.cardTitle}>Party</div>
-          <div className={styles.metric}>{user.memberships.length}</div>
-          <div className={styles.subtext}>Joined parties</div>
+      <div className={styles.headerRow}>
+        <div className={styles.heading}>Profile</div>
+        <div className={styles.username}>{user.handle}</div>
+        <div className={styles.inlineStats}>
+          <span>
+            Streak 🔥 <span className="mono">{user.streakCount}</span>
+          </span>
+          <span>
+            XP <span className="mono">{user.xp}</span>
+          </span>
+          <span>
+            Level <span className="mono">{user.level}</span>
+          </span>
         </div>
       </div>
 
-      <div className={styles.grid}>
-        <div className={styles.card}>
-          <div className={styles.cardTitle}>Latest delta</div>
-          {user.progresses[0] ? (
-            <div className={styles.listItem}>
-              {format(user.progresses[0].day, "MMM d")} · +{user.progresses[0].totalDelta} solved (E {user.progresses[0].easyDelta} / M {user.progresses[0].mediumDelta} / H {user.progresses[0].hardDelta}) · XP {user.progresses[0].xpEarned} · Streak {user.progresses[0].streakAfter}
+      <section className={styles.section}>
+        <div className={styles.panel}>
+          <div className={styles.sectionTitle}>Solved problems</div>
+          <div className={styles.breakdown}>
+            <div className={styles.breakdownRow}>
+              <div style={{ color: "var(--easy)" }}>Easy</div>
+              <div className={styles.barTrack}>
+                <div
+                  className={`${styles.barFill} ${styles.barEasy}`}
+                  style={{ width: totals.total ? `${(totals.easy / totals.total) * 100}%` : "0%" }}
+                />
+              </div>
+              <div className="mono">{totals.easy}</div>
             </div>
-          ) : (
-            <div className={styles.empty}>No progress yet. Simulate a snapshot below.</div>
-          )}
+            <div className={styles.breakdownRow}>
+              <div style={{ color: "var(--medium)" }}>Medium</div>
+              <div className={styles.barTrack}>
+                <div
+                  className={`${styles.barFill} ${styles.barMedium}`}
+                  style={{ width: totals.total ? `${(totals.medium / totals.total) * 100}%` : "0%" }}
+                />
+              </div>
+              <div className="mono">{totals.medium}</div>
+            </div>
+            <div className={styles.breakdownRow}>
+              <div style={{ color: "var(--hard)" }}>Hard</div>
+              <div className={styles.barTrack}>
+                <div
+                  className={`${styles.barFill} ${styles.barHard}`}
+                  style={{ width: totals.total ? `${(totals.hard / totals.total) * 100}%` : "0%" }}
+                />
+              </div>
+              <div className="mono">{totals.hard}</div>
+            </div>
+          </div>
         </div>
-        <div className={styles.card}>
-          <div className={styles.cardTitle}>Recommendations</div>
-          {recs.length === 0 ? (
-            <div className={styles.empty}>No recs yet; add a snapshot.</div>
-          ) : (
-            <ul className={styles.list}>
-              {recs.map((rec) => (
-                <li key={rec.title} className={styles.listItem}>
-                  <strong>{rec.title}</strong> — {rec.reason}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
 
-      <div className={styles.card}>
-        <div className={styles.cardTitle}>Recent deltas</div>
+        <div className={styles.sideStack}>
+          <div>
+            <div className={styles.sectionTitle}>Today</div>
+            {latestDelta ? (
+              <div className={styles.deltaLine}>
+                <span className="mono">+{latestDelta.totalDelta}</span> solved · <span className="mono" style={{ color: "var(--easy)" }}>E {latestDelta.easyDelta}</span> / <span className="mono" style={{ color: "var(--medium)" }}>M {latestDelta.mediumDelta}</span> / <span className="mono" style={{ color: "var(--hard)" }}>H {latestDelta.hardDelta}</span>
+              </div>
+            ) : (
+              <div className={styles.muted}>No activity today.</div>
+            )}
+          </div>
+          <div>
+            <div className={styles.sectionTitle}>Streak status</div>
+            <div className={latestDelta?.totalDelta ? styles.streakOk : styles.streakWarn}>
+              {streakStatus}{daysSince !== null ? ` · ${daysSince}d` : ""}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className={styles.sectionTitle}>Recent activity</div>
         {user.progresses.length === 0 ? (
-          <div className={styles.empty}>No history.</div>
+          <div className={styles.muted}>No history.</div>
         ) : (
           <table className={styles.table}>
             <thead>
               <tr>
                 <th>Day</th>
                 <th>Solved</th>
-                <th>Breakdown</th>
+                <th>Easy</th>
+                <th>Medium</th>
+                <th>Hard</th>
                 <th>XP</th>
                 <th>Streak</th>
               </tr>
@@ -101,30 +150,52 @@ export default async function DashboardPage() {
               {user.progresses.map((p) => (
                 <tr key={p.id}>
                   <td>{format(p.day, "MMM d")}</td>
-                  <td>+{p.totalDelta}</td>
-                  <td>
-                    E {p.easyDelta} / M {p.mediumDelta} / H {p.hardDelta}
-                  </td>
-                  <td>{p.xpEarned}</td>
-                  <td>{p.streakAfter}</td>
+                  <td className="mono">+{p.totalDelta}</td>
+                  <td className="mono" style={{ color: "var(--easy)" }}>E {p.easyDelta}</td>
+                  <td className="mono" style={{ color: "var(--medium)" }}>M {p.mediumDelta}</td>
+                  <td className="mono" style={{ color: "var(--hard)" }}>H {p.hardDelta}</td>
+                  <td className="mono">{p.xpEarned}</td>
+                  <td className="mono">{p.streakAfter}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-      </div>
+      </section>
 
-      <div className={styles.card}>
-        <div className={styles.cardTitle}>Actions</div>
-        <div className={styles.actions}>
-          <form action={simulateSnapshotAction}>
-            <button type="submit" className={styles.primaryBtn}>
-              Simulate snapshot
-            </button>
-          </form>
-          <div className={styles.subtext}>Uses deterministic mock data; replace with real LeetCode fetch when ready.</div>
+      <section className={styles.secondaryGrid}>
+        <div className={styles.panel}>
+          <div className={styles.sectionTitle}>Party progress</div>
+          {user.memberships.length === 0 ? (
+            <div className={styles.muted}>No parties joined.</div>
+          ) : (
+            <div className={styles.muted}>
+              Members <span className="mono">{partyAggregate.members}</span> · Active <span className="mono">{partyAggregate.activeMembers}</span> · Weekly solved <span className="mono">{partyAggregate.totalSolved}</span>
+            </div>
+          )}
         </div>
-      </div>
+        <div className={styles.panel}>
+          <div className={styles.sectionTitle}>Recommendations</div>
+          {recs.length === 0 ? (
+            <div className={styles.muted}>No recommendations yet.</div>
+          ) : (
+            <div className={styles.recommendations}>
+              {recs.map((rec) => (
+                <div key={rec.title}>{rec.title}</div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className={styles.actionRow}>
+        <form action={simulateSnapshotAction}>
+          <button type="submit" className={styles.buttonPlain}>
+            Fetch latest
+          </button>
+        </form>
+        <span className={styles.muted}>Public profile only.</span>
+      </section>
     </div>
   );
 }

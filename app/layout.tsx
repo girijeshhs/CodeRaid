@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const spaceMono = Space_Mono({
@@ -21,7 +22,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceMono.variable} theme-base`}>{children}</body>
+      <body className={`${spaceMono.variable} theme-base`}>
+        <header className="site-nav">
+          <div className="site-brand">CodeRaid</div>
+          <nav>
+            <Link href="/">Home</Link>
+            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/party">Party</Link>
+            <Link href="/settings">Settings</Link>
+          </nav>
+        </header>
+        <main className="site-main">{children}</main>
+      </body>
     </html>
   );
 }

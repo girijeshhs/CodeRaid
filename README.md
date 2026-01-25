@@ -6,8 +6,8 @@ CodeRaid tracks public LeetCode progress with daily snapshots, converts deltas i
 
 ```bash
 npm install
-cp .env.example .env   # add your DATABASE_URL (Postgres)
-npx prisma migrate dev  # create tables
+cp .env.example .env   # add your DATABASE_URL (use Supabase postgres URL)
+npx prisma migrate dev --name init  # create tables (requires reachable DB)
 npm run dev
 ```
 
@@ -18,9 +18,9 @@ npm run dev
 - Party + PartyMembership: simple private groups with invite codes.
 
 ### In-flight pieces
-- Manual resync API stub at `app/api/resync/route.ts` (hooks to fetch/diff next).
-- Services drafted: snapshot manager, diffing, XP/streak engine, recommendation scaffolding.
-- UI: landing outlines flows, guardrails, and next steps.
+- Manual resync API now records synthetic snapshots; swap in real LeetCode fetch later.
+- Services: snapshot manager, diffing, XP/streak engine, recommendation heuristics, party aggregator.
+- UI: onboarding on `/`, dashboard on `/dashboard`, parties on `/party`, settings on `/settings`.
 
 ### Scripts
 - `npm run dev` – start Next.js dev server.
@@ -29,6 +29,6 @@ npm run dev
 - `npx prisma studio` – inspect DB (after DATABASE_URL is set).
 
 ### Next steps
-- Wire auth (e.g., magic link) and onboarding to collect handles.
-- Implement public-only LeetCode fetcher with rate limits + caching.
-- Connect cron + manual resync to snapshot persistence and recommendations.
+- Replace synthetic profile fetcher with real public-only LeetCode fetcher (rate-limited + cached).
+- Add real auth (magic link or OAuth) and migrate session cookie to durable sessions.
+- Introduce cron for daily snapshots and surface party aggregates over time.

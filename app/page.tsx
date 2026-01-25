@@ -1,4 +1,5 @@
 import styles from "./page.module.css";
+import { onboardAction } from "./actions";
 
 const flows = [
   {
@@ -62,10 +63,27 @@ export default function Home() {
             and streaks, and lets parties cheer (or jeer) each other on. Everything is deterministic,
             explainable, and limited to public data.
           </p>
-          <div className={styles.ctaRow}>
-            <span className={styles.buttonPrimary}>Next: wire auth & DB</span>
-            <span className={styles.buttonGhost}>Cron + manual resync stubs ready</span>
-          </div>
+          <form className={styles.ctaRow} action={onboardAction}>
+            <input
+              name="handle"
+              placeholder="LeetCode handle"
+              aria-label="LeetCode handle"
+              required
+              className={styles.input}
+            />
+            <input
+              name="email"
+              type="email"
+              placeholder="Email (optional)"
+              className={styles.input}
+            />
+            <button type="submit" className={styles.buttonPrimary}>
+              Start tracking
+            </button>
+            <a className={styles.buttonGhost} href="/dashboard">
+              Go to dashboard
+            </a>
+          </form>
         </section>
 
         <section className={styles.grid}>

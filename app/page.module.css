@@ -73,6 +73,7 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 20px;
+  align-items: center;
 }
 
 .buttonPrimary,
@@ -97,6 +98,20 @@
 .buttonGhost {
   background: rgba(20, 24, 38, 0.7);
   color: var(--muted);
+}
+
+.input {
+  background: rgba(15, 17, 24, 0.8);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  padding: 12px 14px;
+  min-width: 220px;
+}
+
+.input:focus {
+  border-color: rgba(92, 225, 255, 0.6);
+  outline: none;
 }
 
 .buttonPrimary:hover,

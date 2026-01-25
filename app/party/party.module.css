@@ -1,0 +1,60 @@
+.wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  border: 1px solid var(--border);
+  background: rgba(15, 17, 24, 0.9);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.input {
+  background: rgba(15, 17, 24, 0.8);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 10px 12px;
+  min-width: 220px;
+}
+
+.button {
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(120deg, rgba(92, 225, 255, 0.24), rgba(10, 12, 16, 0.9));
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.list {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.item {
+  border: 1px dashed var(--border);
+  padding: 12px;
+  border-radius: 10px;
+  color: var(--muted);
+}

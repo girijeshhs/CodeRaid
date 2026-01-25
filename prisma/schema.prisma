@@ -47,7 +47,7 @@ model DerivedProgress {
   user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String
   snapshot        LeetCodeSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
-  snapshotId      String
+  snapshotId      String   @unique
   day             DateTime
   totalDelta      Int
   easyDelta       Int

@@ -6,7 +6,7 @@ import { simulateSnapshotAction } from "../actions";
 import styles from "./dashboard.module.css";
 
 export default async function DashboardPage() {
-  const userId = requireUserId();
+  const userId = await requireUserId();
 
   const user = await prisma.user.findUnique({
     where: { id: userId },

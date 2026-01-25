@@ -40,15 +40,15 @@ export async function onboardAction(formData: FormData) {
     create: { handle, email },
   });
 
-  setSessionUserId(user.id);
+  await setSessionUserId(user.id);
   redirect("/dashboard");
 }
 
 export async function simulateSnapshotAction() {
-  const userId = requireUserId();
+  const userId = await requireUserId();
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) {
-    clearSession();
+    await clearSession();
     redirect("/");
   }
 
@@ -67,7 +67,7 @@ export async function simulateSnapshotAction() {
 }
 
 export async function createPartyAction(formData: FormData) {
-  const userId = requireUserId();
+  const userId = await requireUserId();
   const parsed = partySchema.safeParse({
     name: formData.get("name"),
     description: formData.get("description") || undefined,
@@ -97,7 +97,7 @@ export async function createPartyAction(formData: FormData) {
 }
 
 export async function joinPartyAction(formData: FormData) {
-  const userId = requireUserId();
+  const userId = await requireUserId();
   const code = (formData.get("code") || "").toString().trim();
   if (!code) return { ok: false, error: "Invite code required." };
 
@@ -123,7 +123,7 @@ export async function joinPartyAction(formData: FormData) {
 }
 
 export async function updateHandleAction(formData: FormData) {
-  const userId = requireUserId();
+  const userId = await requireUserId();
   const parsed = handleSchema.safeParse({
     handle: formData.get("handle"),
     email: formData.get("email") || undefined,
@@ -145,15 +145,15 @@ export async function updateHandleAction(formData: FormData) {
 }
 
 export async function signOutAction() {
-  clearSession();
+  await clearSession();
   redirect("/");
 }
 
 export async function seedDemoIfMissing() {
   // Useful for dev: ensures a user exists if cookie is gone but DB empty.
-  const current = getSessionUserId();
+  const current = await getSessionUserId();
   if (current) return;
   const exists = await prisma.user.findFirst();
   if (!exists) return;
-  setSessionUserId(exists.id);
+  await setSessionUserId(exists.id);
 }

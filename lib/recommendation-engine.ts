@@ -89,7 +89,7 @@ const pickTopicWeakness = (topics?: TopicStat[]): Recommendation | null => {
     .filter((topic) => topic.total && topic.total > 0)
     .map((topic) => ({
       slug: topic.slug,
-      ratio: topic.solved / (topic.total ?? topic.solved || 1),
+      ratio: topic.solved / ((topic.total ?? topic.solved) || 1),
     }))
     .sort((a, b) => a.ratio - b.ratio);
 

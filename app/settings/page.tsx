@@ -4,7 +4,7 @@ import { signOutAction, updateHandleAction } from "../actions";
 import styles from "./settings.module.css";
 
 export default async function SettingsPage() {
-  const userId = requireUserId();
+  const userId = await requireUserId();
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return null;
 

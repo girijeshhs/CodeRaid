@@ -4,7 +4,7 @@ import { createPartyAction, joinPartyAction } from "../actions";
 import styles from "./party.module.css";
 
 export default async function PartyPage() {
-  const userId = requireUserId();
+  const userId = await requireUserId();
 
   const memberships = await prisma.partyMembership.findMany({
     where: { userId },

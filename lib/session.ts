@@ -3,20 +3,20 @@ import { redirect } from "next/navigation";
 
 const COOKIE_KEY = "coderaid_uid";
 
-export const getSessionUserId = (): string | null => {
-  const store = cookies();
+export const getSessionUserId = async (): Promise<string | null> => {
+  const store = await cookies();
   const value = store.get(COOKIE_KEY)?.value;
   return value ?? null;
 };
 
-export const requireUserId = (): string => {
-  const userId = getSessionUserId();
+export const requireUserId = async (): Promise<string> => {
+  const userId = await getSessionUserId();
   if (!userId) redirect("/");
   return userId;
 };
 
-export const setSessionUserId = (userId: string) => {
-  const store = cookies();
+export const setSessionUserId = async (userId: string) => {
+  const store = await cookies();
   store.set(COOKIE_KEY, userId, {
     path: "/",
     httpOnly: true,
@@ -25,7 +25,7 @@ export const setSessionUserId = (userId: string) => {
   });
 };
 
-export const clearSession = () => {
-  const store = cookies();
+export const clearSession = async () => {
+  const store = await cookies();
   store.delete(COOKIE_KEY);
 };

@@ -6,9 +6,96 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../app/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String?  @unique
+  handle         String   @unique
+  xp             Int      @default(0)
+  level          Int      @default(1)
+  streakCount    Int      @default(0)
+  lastSnapshotAt DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  snapshots      LeetCodeSnapshot[]
+  progresses     DerivedProgress[]
+  memberships    PartyMembership[]
+  ownedParties   Party[] @relation("PartyOwner")
+}
+
+model LeetCodeSnapshot {
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  takenFor   DateTime
+  total      Int
+  easy       Int
+  medium     Int
+  hard       Int
+  topics     Json?
+  contests   Json?
+  createdAt  DateTime @default(now())
+
+  progress   DerivedProgress?
+
+  @@unique([userId, takenFor])
+  @@index([takenFor])
+}
+
+model DerivedProgress {
+  id              String            @id @default(cuid())
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  snapshot        LeetCodeSnapshot  @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  snapshotId      String
+  day             DateTime
+  totalDelta      Int
+  easyDelta       Int
+  mediumDelta     Int
+  hardDelta       Int
+  xpEarned        Int
+  streakAfter     Int
+  createdAt       DateTime @default(now())
+
+  @@unique([userId, day])
+  @@index([day])
+}
+
+model Party {
+  id          String            @id @default(cuid())
+  name        String
+  description String?
+  inviteCode  String            @unique
+  owner       User?             @relation("PartyOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  ownerId     String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  memberships PartyMembership[]
+}
+
+model PartyMembership {
+  id        String   @id @default(cuid())
+  party     Party    @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  partyId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  role      MembershipRole @default(MEMBER)
+  joinedAt  DateTime @default(now())
+
+  @@unique([partyId, userId])
+  @@index([userId])
+}
+
+enum MembershipRole {
+  MEMBER
+  MODERATOR
+  OWNER
 }

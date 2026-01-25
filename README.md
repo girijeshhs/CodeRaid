@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## CodeRaid
 
-## Getting Started
+CodeRaid tracks public LeetCode progress with daily snapshots, converts deltas into XP/streaks, and lets parties compare momentum. Stack: Next.js (App Router) + Prisma + Postgres.
 
-First, run the development server:
+### Quick start
 
 ```bash
+npm install
+cp .env.example .env   # add your DATABASE_URL (Postgres)
+npx prisma migrate dev  # create tables
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Data model (Prisma)
+- User: handle, XP, level, streak.
+- LeetCodeSnapshot: daily counts per difficulty plus optional topic JSON.
+- DerivedProgress: computed deltas + XP/streak outcome per day.
+- Party + PartyMembership: simple private groups with invite codes.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### In-flight pieces
+- Manual resync API stub at `app/api/resync/route.ts` (hooks to fetch/diff next).
+- Services drafted: snapshot manager, diffing, XP/streak engine, recommendation scaffolding.
+- UI: landing outlines flows, guardrails, and next steps.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Scripts
+- `npm run dev` – start Next.js dev server.
+- `npm run build` / `npm start` – production build + serve.
+- `npm run lint` – run ESLint.
+- `npx prisma studio` – inspect DB (after DATABASE_URL is set).
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Next steps
+- Wire auth (e.g., magic link) and onboarding to collect handles.
+- Implement public-only LeetCode fetcher with rate limits + caching.
+- Connect cron + manual resync to snapshot persistence and recommendations.

@@ -1,80 +1,100 @@
 .wrapper {
-  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.heading {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.headerRow {
+.header {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .username {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
   color: var(--text);
-  letter-spacing: -0.01em;
 }
 
-.inlineStats {
+.stats {
   display: flex;
-  gap: 20px;
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
-.section {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 20px;
-}
-
-.sectionTitle {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-}
-
-.breakdown {
-  display: grid;
   gap: 12px;
 }
 
-.breakdownRow {
-  display: grid;
-  grid-template-columns: 60px 1fr 50px;
-  gap: 10px;
+.statBadge {
+  padding: 6px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
   align-items: center;
+  gap: 6px;
+}
+
+.statBadge .mono {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 16px;
+  align-items: start;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.cardTitle {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.progressList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progressRow {
+  display: grid;
+  grid-template-columns: 60px 1fr 40px;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.diffLabel {
+  font-weight: 500;
 }
 
 .barTrack {
   height: 6px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 3px;
   overflow: hidden;
+  cursor: pointer;
+  position: relative;
 }
 
 .barFill {
   height: 100%;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 3px;
 }
 
 .barEasy {
@@ -89,65 +109,64 @@
   background: var(--hard);
 }
 
-.sideStack {
-  display: grid;
-  gap: 10px;
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.sideStack > div {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 12px;
+.statRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 13px;
 }
 
-.deltaLine {
-  font-size: 18px;
+.statLabel {
+  color: var(--text-secondary);
+}
+
+.statValue {
   font-weight: 600;
   color: var(--text);
 }
 
-.statusLine {
-  font-size: 12px;
-  color: var(--text-tertiary);
+.compactList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.table th,
-.table td {
-  border-bottom: 1px solid var(--border);
-  padding: 12px 14px;
-  text-align: left;
 }
 
 .table th {
-  color: var(--text-secondary);
-  font-weight: 600;
+  text-align: left;
+  padding: 10px 12px;
   font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: 10px 12px;
+}
+
+.table tbody tr:nth-child(even) {
   background: rgba(255, 255, 255, 0.02);
 }
 
-.table tbody tr {
-  transition: background 0.2s;
-}
-
 .table tbody tr:hover {
-  background: var(--hover);
-}
-
-.table tbody tr:last-child td {
-  border-bottom: none;
+  background: var(--card-hover);
 }
 
 .muted {
@@ -155,66 +174,42 @@
   font-size: 13px;
 }
 
-.secondaryGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 4px;
-}
-
-.panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.recommendations {
-  display: grid;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--text);
-}
-
-.actionRow {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-
-.actionRow > p {
-  font-size: 12px;
-  color: var(--text-tertiary);
-}
-
-.buttonPlain {
-  border: 1px solid var(--border);
+.actionButton {
   background: transparent;
-  color: var(--text);
+  border: 1px solid var(--border);
   padding: 8px 14px;
   border-radius: 6px;
+  color: var(--text);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
-  width: fit-content;
+  transition: background 0.15s;
+  align-self: flex-start;
+  margin-top: 8px;
 }
 
-.buttonPlain:hover {
-  background: var(--hover);
-  border-color: var(--accent);
-  color: var(--accent);
+.actionButton:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.streakOk {
+.streakActive {
   color: var(--easy);
 }
 
-.streakWarn {
+.streakBroken {
   color: var(--hard);
+}
+
+@media (max-width: 900px) {
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
 }
 
 @media (max-width: 900px) {

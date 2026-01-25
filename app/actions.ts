@@ -77,7 +77,27 @@ export async function createPartyAction(formData: FormData) {
   }
 
   const inviteCode = randomBytes(4).toString("hex");
+  const userHandles = (formData.get("userHandles") || "").toString().trim();
 
+  // Parse comma-separated handles
+  const handles = userHandles
+    .split(",")
+    .map(h => h.trim().toLowerCase())
+    .filter(h => h.length > 0);
+
+  // Find users by handles
+  const usersToAdd = handles.length > 0 
+    ? await prisma.user.findMany({
+        where: {
+          handle: {
+            in: handles,
+          },
+        },
+        select: { id: true, handle: true },
+      })
+    : [];
+
+  // Create party with owner and additional members
   await prisma.party.create({
     data: {
       name: parsed.data.name,
@@ -85,10 +105,16 @@ export async function createPartyAction(formData: FormData) {
       inviteCode,
       owner: { connect: { id: userId } },
       memberships: {
-        create: {
-          userId,
-          role: "OWNER",
-        },
+        create: [
+          {
+            userId,
+            role: "OWNER",
+          },
+          ...usersToAdd.map(user => ({
+            userId: user.id,
+            role: "MEMBER" as const,
+          })),
+        ],
       },
     },
   });

@@ -20,6 +20,12 @@ export default async function PartyPage() {
         <form className={styles.formRow} action={createPartyAction}>
           <input name="name" placeholder="Party name" className={styles.input} required />
           <input name="description" placeholder="Description (optional)" className={styles.input} />
+          <textarea 
+            name="userHandles" 
+            placeholder="User handles to add (comma-separated, e.g. user1, user2, user3)" 
+            className={styles.textarea}
+            rows={3}
+          />
           <button type="submit" className={styles.button}>
             Create
           </button>

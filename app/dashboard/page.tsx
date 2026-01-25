@@ -56,146 +56,157 @@ export default async function DashboardPage() {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.headerRow}>
-        <div className={styles.heading}>Profile</div>
+      {/* Header with username and inline stats badges */}
+      <div className={styles.header}>
         <div className={styles.username}>{user.handle}</div>
-        <div className={styles.inlineStats}>
-          <span>
-            Streak 🔥 <span className="mono">{user.streakCount}</span>
-          </span>
-          <span>
+        <div className={styles.stats}>
+          <div className={styles.statBadge}>
+            🔥 Streak <span className="mono">{user.streakCount}</span>
+          </div>
+          <div className={styles.statBadge}>
             XP <span className="mono">{user.xp}</span>
-          </span>
-          <span>
+          </div>
+          <div className={styles.statBadge}>
             Level <span className="mono">{user.level}</span>
-          </span>
+          </div>
         </div>
       </div>
 
-      <section className={styles.section}>
-        <div className={styles.panel}>
-          <div className={styles.sectionTitle}>Solved problems</div>
-          <div className={styles.breakdown}>
-            <div className={styles.breakdownRow}>
-              <div style={{ color: "var(--easy)" }}>Easy</div>
-              <div className={styles.barTrack}>
-                <div
-                  className={`${styles.barFill} ${styles.barEasy}`}
-                  style={{ width: totals.total ? `${(totals.easy / totals.total) * 100}%` : "0%" }}
-                />
+      {/* Main 2-column grid */}
+      <div className={styles.mainGrid}>
+        {/* Left column: Solved Problems + Recent Activity */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div className={styles.card}>
+            <div className={styles.cardTitle}>Solved Problems</div>
+            <div className={styles.progressList}>
+              <div className={styles.progressRow}>
+                <div className={styles.diffLabel} style={{ color: "var(--easy)" }}>Easy</div>
+                <div className={styles.barTrack}>
+                  <div
+                    className={`${styles.barFill} ${styles.barEasy}`}
+                    style={{ width: totals.total ? `${(totals.easy / totals.total) * 100}%` : "0%" }}
+                  />
+                </div>
+                <div className="mono">{totals.easy}</div>
               </div>
-              <div className="mono">{totals.easy}</div>
-            </div>
-            <div className={styles.breakdownRow}>
-              <div style={{ color: "var(--medium)" }}>Medium</div>
-              <div className={styles.barTrack}>
-                <div
-                  className={`${styles.barFill} ${styles.barMedium}`}
-                  style={{ width: totals.total ? `${(totals.medium / totals.total) * 100}%` : "0%" }}
-                />
+              <div className={styles.progressRow}>
+                <div className={styles.diffLabel} style={{ color: "var(--medium)" }}>Medium</div>
+                <div className={styles.barTrack}>
+                  <div
+                    className={`${styles.barFill} ${styles.barMedium}`}
+                    style={{ width: totals.total ? `${(totals.medium / totals.total) * 100}%` : "0%" }}
+                  />
+                </div>
+                <div className="mono">{totals.medium}</div>
               </div>
-              <div className="mono">{totals.medium}</div>
-            </div>
-            <div className={styles.breakdownRow}>
-              <div style={{ color: "var(--hard)" }}>Hard</div>
-              <div className={styles.barTrack}>
-                <div
-                  className={`${styles.barFill} ${styles.barHard}`}
-                  style={{ width: totals.total ? `${(totals.hard / totals.total) * 100}%` : "0%" }}
-                />
+              <div className={styles.progressRow}>
+                <div className={styles.diffLabel} style={{ color: "var(--hard)" }}>Hard</div>
+                <div className={styles.barTrack}>
+                  <div
+                    className={`${styles.barFill} ${styles.barHard}`}
+                    style={{ width: totals.total ? `${(totals.hard / totals.total) * 100}%` : "0%" }}
+                  />
+                </div>
+                <div className="mono">{totals.hard}</div>
               </div>
-              <div className="mono">{totals.hard}</div>
             </div>
           </div>
-        </div>
 
-        <div className={styles.sideStack}>
-          <div>
-            <div className={styles.sectionTitle}>Today</div>
-            {latestDelta ? (
-              <div className={styles.deltaLine}>
-                <span className="mono">+{latestDelta.totalDelta}</span> solved · <span className="mono" style={{ color: "var(--easy)" }}>E {latestDelta.easyDelta}</span> / <span className="mono" style={{ color: "var(--medium)" }}>M {latestDelta.mediumDelta}</span> / <span className="mono" style={{ color: "var(--hard)" }}>H {latestDelta.hardDelta}</span>
-              </div>
+          <div className={styles.card}>
+            <div className={styles.cardTitle}>Recent Activity</div>
+            {user.progresses.length === 0 ? (
+              <div style={{ color: "var(--text-secondary)", fontSize: "13px" }}>No history.</div>
             ) : (
-              <div className={styles.muted}>No activity today.</div>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Day</th>
+                    <th>Solved</th>
+                    <th>Easy</th>
+                    <th>Med</th>
+                    <th>Hard</th>
+                    <th>XP</th>
+                    <th>Streak</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {user.progresses.map((p) => (
+                    <tr key={p.id}>
+                      <td>{format(p.day, "MMM d")}</td>
+                      <td className="mono">+{p.totalDelta}</td>
+                      <td className="mono" style={{ color: "var(--easy)" }}>{p.easyDelta}</td>
+                      <td className="mono" style={{ color: "var(--medium)" }}>{p.mediumDelta}</td>
+                      <td className="mono" style={{ color: "var(--hard)" }}>{p.hardDelta}</td>
+                      <td className="mono">{p.xpEarned}</td>
+                      <td className="mono">{p.streakAfter}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
-          <div>
-            <div className={styles.sectionTitle}>Streak status</div>
-            <div className={latestDelta?.totalDelta ? styles.streakOk : styles.streakWarn}>
-              {streakStatus}{daysSince !== null ? ` · ${daysSince}d` : ""}
+        </div>
+
+        {/* Right column: Today + Streak + Party + Recommendations */}
+        <div className={styles.rightColumn}>
+          <div className={styles.card}>
+            <div className={styles.cardTitle}>Today & Streak</div>
+            <div className={styles.statRow}>
+              <span className={styles.statLabel}>Solved today</span>
+              <span className={styles.statValue}>
+                {latestDelta ? (
+                  <>
+                    <span className="mono">+{latestDelta.totalDelta}</span>{" "}
+                    <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
+                      ({latestDelta.easyDelta}E / {latestDelta.mediumDelta}M / {latestDelta.hardDelta}H)
+                    </span>
+                  </>
+                ) : (
+                  <span style={{ color: "var(--text-secondary)" }}>0</span>
+                )}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statLabel}>Streak status</span>
+              <span className={`${styles.statValue} ${latestDelta?.totalDelta ? styles.streakActive : styles.streakBroken}`}>
+                {streakStatus} {daysSince !== null ? `(${daysSince}d)` : ""}
+              </span>
             </div>
           </div>
-        </div>
-      </section>
 
-      <section>
-        <div className={styles.sectionTitle}>Recent activity</div>
-        {user.progresses.length === 0 ? (
-          <div className={styles.muted}>No history.</div>
-        ) : (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Day</th>
-                <th>Solved</th>
-                <th>Easy</th>
-                <th>Medium</th>
-                <th>Hard</th>
-                <th>XP</th>
-                <th>Streak</th>
-              </tr>
-            </thead>
-            <tbody>
-              {user.progresses.map((p) => (
-                <tr key={p.id}>
-                  <td>{format(p.day, "MMM d")}</td>
-                  <td className="mono">+{p.totalDelta}</td>
-                  <td className="mono" style={{ color: "var(--easy)" }}>E {p.easyDelta}</td>
-                  <td className="mono" style={{ color: "var(--medium)" }}>M {p.mediumDelta}</td>
-                  <td className="mono" style={{ color: "var(--hard)" }}>H {p.hardDelta}</td>
-                  <td className="mono">{p.xpEarned}</td>
-                  <td className="mono">{p.streakAfter}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+          <div className={styles.card}>
+            <div className={styles.cardTitle}>Party Progress</div>
+            {user.memberships.length === 0 ? (
+              <div style={{ color: "var(--text-secondary)", fontSize: "13px" }}>No parties joined</div>
+            ) : (
+              <div className={styles.compactList}>
+                <div>Members: <span className="mono">{partyAggregate.members}</span></div>
+                <div>Active: <span className="mono">{partyAggregate.activeMembers}</span></div>
+                <div>Weekly solved: <span className="mono">{partyAggregate.totalSolved}</span></div>
+              </div>
+            )}
+          </div>
 
-      <section className={styles.secondaryGrid}>
-        <div className={styles.panel}>
-          <div className={styles.sectionTitle}>Party progress</div>
-          {user.memberships.length === 0 ? (
-            <div className={styles.muted}>No parties joined.</div>
-          ) : (
-            <div className={styles.muted}>
-              Members <span className="mono">{partyAggregate.members}</span> · Active <span className="mono">{partyAggregate.activeMembers}</span> · Weekly solved <span className="mono">{partyAggregate.totalSolved}</span>
-            </div>
-          )}
-        </div>
-        <div className={styles.panel}>
-          <div className={styles.sectionTitle}>Recommendations</div>
-          {recs.length === 0 ? (
-            <div className={styles.muted}>No recommendations yet.</div>
-          ) : (
-            <div className={styles.recommendations}>
-              {recs.map((rec) => (
-                <div key={rec.title}>{rec.title}</div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+          <div className={styles.card}>
+            <div className={styles.cardTitle}>Recommendations</div>
+            {recs.length === 0 ? (
+              <div style={{ color: "var(--text-secondary)", fontSize: "13px" }}>No suggestions yet</div>
+            ) : (
+              <div className={styles.compactList}>
+                {recs.map((rec) => (
+                  <div key={rec.title}>{rec.title}</div>
+                ))}
+              </div>
+            )}
+          </div>
 
-      <section className={styles.actionRow}>
-        <form action={simulateSnapshotAction}>
-          <button type="submit" className={styles.buttonPlain}>
-            Fetch latest
-          </button>
-        </form>
-        <span className={styles.muted}>Public profile only.</span>
-      </section>
+          <form action={simulateSnapshotAction}>
+            <button type="submit" className={styles.actionButton}>
+              Fetch Latest
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

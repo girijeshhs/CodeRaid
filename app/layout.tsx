@@ -17,7 +17,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CodeRaid | Gamified LeetCode tracker",
+  title: "CodeRaid | Progress tracker",
   description: "Track LeetCode progress with snapshots, XP, streaks, and parties.",
 };
 
@@ -32,9 +32,10 @@ export default function RootLayout({
         <header className="site-nav">
           <div className="site-brand">CodeRaid</div>
           <nav>
-            <Link href="/">Home</Link>
-            <Link href="/dashboard">Dashboard</Link>
-            <Link href="/party">Party</Link>
+            <Link href="/">Sign in</Link>
+            <Link href="/dashboard">Party overview</Link>
+            <Link href="/weekly">Weekly progress</Link>
+            <Link href="/party">Manage parties</Link>
             <Link href="/settings">Settings</Link>
           </nav>
         </header>

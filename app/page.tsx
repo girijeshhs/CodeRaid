@@ -11,24 +11,43 @@ export default async function Home() {
 
   return (
     <div className={styles.page}>
-      <div className={`${styles.shell}`}>
-        <section className={styles.hero}>
-          <p className={styles.heroTitle}>Track your LeetCode progress with daily snapshots.</p>
-          <form className={styles.ctaRow} action={onboardAction}>
+      <section className={styles.left}>
+        <div className={styles.intro}>
+          <div className={styles.brand}>CodeRaid</div>
+          <h1 className={styles.headline}>Track progress with daily structure and clear comparisons.</h1>
+          <ul className={styles.bullets}>
+            <li>Daily snapshots keep progress measurable.</li>
+            <li>Weekly analysis surfaces real movement.</li>
+            <li>Party comparisons make momentum visible.</li>
+            <li>Structured signals guide improvement.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className={styles.right}>
+        <div className={styles.loginCard}>
+          <div className={styles.loginTitle}>Sign in</div>
+          <form className={styles.form} action={onboardAction}>
+            <label className={styles.label} htmlFor="handle">
+              Email or username
+            </label>
             <input
+              id="handle"
               name="handle"
-              placeholder="LeetCode handle"
-              aria-label="LeetCode handle"
+              placeholder="you@domain.com or handle"
+              aria-label="Email or username"
               required
               className={styles.input}
             />
-            <button type="submit" className={styles.buttonPrimary}>
-              Continue
+            <button type="submit" className={styles.primaryButton}>
+              Sign in
             </button>
           </form>
-          <p className={styles.helper}>Public profile only. No passwords.</p>
-        </section>
-      </div>
+          <button type="button" className={styles.secondaryButton}>
+            Create account
+          </button>
+        </div>
+      </section>
     </div>
   );
 }

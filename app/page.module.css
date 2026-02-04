@@ -81,54 +81,33 @@
   margin-bottom: 16px;
 }
 
-.form {
-  display: grid;
-  gap: 12px;
-}
-
-.label {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.input {
-  background: transparent;
+.googleButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   border: 1px solid var(--border);
-  color: var(--text);
-  padding: 10px 12px;
-  font-size: 14px;
-}
-
-.input:focus {
-  border-color: var(--accent);
-  outline: none;
-}
-
-.primaryButton {
-  border: 1px solid var(--accent);
-  background: var(--accent);
+  background: #ffffff;
   color: #1a1a1a;
   padding: 10px 12px;
   font-weight: 600;
   cursor: pointer;
 }
 
-.primaryButton:hover {
-  background: var(--accent-hover);
+.googleButton:hover {
+  background: #f2f2f2;
 }
 
-.secondaryButton {
-  margin-top: 12px;
-  width: 100%;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  padding: 10px 12px;
-  cursor: pointer;
+.divider {
+  margin: 16px 0 8px;
+  font-size: 12px;
+  color: var(--text-tertiary);
 }
 
-.secondaryButton:hover {
-  border-color: var(--text-secondary);
+.helperText {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  line-height: 1.5;
 }
 
 @media (max-width: 960px) {

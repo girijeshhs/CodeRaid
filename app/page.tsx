@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import styles from "./page.module.css";
-import { onboardAction } from "./actions";
 import { getSessionUserId } from "@/lib/session";
 
 export default async function Home() {
@@ -27,25 +26,13 @@ export default async function Home() {
       <section className={styles.right}>
         <div className={styles.loginCard}>
           <div className={styles.loginTitle}>Sign in</div>
-          <form className={styles.form} action={onboardAction}>
-            <label className={styles.label} htmlFor="handle">
-              Email or username
-            </label>
-            <input
-              id="handle"
-              name="handle"
-              placeholder="you@domain.com or handle"
-              aria-label="Email or username"
-              required
-              className={styles.input}
-            />
-            <button type="submit" className={styles.primaryButton}>
-              Sign in
-            </button>
-          </form>
-          <button type="button" className={styles.secondaryButton}>
-            Create account
-          </button>
+          <a className={styles.googleButton} href="/api/auth/google">
+            Continue with Google
+          </a>
+          <div className={styles.divider}>
+            <span>Requires Google account</span>
+          </div>
+          <div className={styles.helperText}>You will link your LeetCode handle after sign-in.</div>
         </div>
       </section>
     </div>

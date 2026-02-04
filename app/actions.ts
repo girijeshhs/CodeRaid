@@ -4,6 +4,7 @@ import { randomBytes } from "crypto";
 import { redirect } from "next/navigation";
 import { startOfDay } from "date-fns";
 import { z } from "zod";
+import { cookies } from "next/headers";
 
 import { prisma } from "@/lib/prisma";
 import { setSessionUserId, clearSession, requireUserId, getSessionUserId } from "@/lib/session";
@@ -41,6 +42,47 @@ export async function onboardAction(formData: FormData) {
   });
 
   await setSessionUserId(user.id);
+  redirect("/dashboard");
+}
+
+export async function completeOnboardingAction(formData: FormData) {
+  const parsed = handleSchema.safeParse({
+    handle: formData.get("handle"),
+    email: undefined,
+  });
+
+  if (!parsed.success) {
+    return { ok: false, error: "Invalid handle." };
+  }
+
+  const store = await cookies();
+  const email = store.get("oauth_email")?.value;
+  if (!email) {
+    redirect("/");
+  }
+
+  const handle = parsed.data.handle.toLowerCase();
+
+  const user = await prisma.user.upsert({
+    where: { handle },
+    update: { email },
+    create: { handle, email },
+  });
+
+  await setSessionUserId(user.id);
+  store.delete("oauth_email");
+
+  try {
+    const snapshot = await profileFetcher.fetchPublicProfile(user.handle);
+    const shaped = profileFetcher.shapeSnapshot({
+      handle: user.handle,
+      stats: { ...snapshot.stats, takenFor: new Date() },
+    });
+    await snapshotManager.recordSnapshot(user.id, shaped.stats);
+  } catch {
+    // Silent fail: user can retry via manual fetch.
+  }
+
   redirect("/dashboard");
 }
 

@@ -69,10 +69,10 @@ export default async function DashboardPage() {
 
   if (!membership) {
     return (
-      <div style={{ padding: "48px 24px" }}>
-        <h1 style={{ fontSize: "20px", marginBottom: "8px" }}>No party yet</h1>
-        <p style={{ color: "var(--text-secondary)" }}>
-          <Link href="/party" style={{ textDecoration: "underline" }}>Create or join a party</Link> to see the overview.
+      <div className="px-6 py-12">
+        <h1 className="mb-2 text-xl font-semibold text-white">No party yet</h1>
+        <p className="text-zinc-400">
+          <Link href="/party" className="underline hover:text-white">Create or join a party</Link> to see the overview.
         </p>
       </div>
     );

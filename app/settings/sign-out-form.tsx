@@ -2,7 +2,6 @@
 
 import { useActionState } from "react";
 import { signOutAction } from "../actions";
-import styles from "./settings.module.css";
 import { SubmitButton } from "../components/submit-button";
 
 export default function SignOutForm() {
@@ -10,7 +9,7 @@ export default function SignOutForm() {
 
   return (
     <form action={action}>
-      <SubmitButton className={`${styles.button} ${styles.secondary}`} loadingText="Signing out...">
+      <SubmitButton variant="danger" loadingText="Signing out...">
         Sign out
       </SubmitButton>
     </form>

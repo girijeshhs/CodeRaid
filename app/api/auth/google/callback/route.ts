@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { setSessionUserId, clearSession } from "@/lib/session";
+import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -24,7 +25,12 @@ type TokenInfo = {
   picture?: string;
 };
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
+  // Rate limiting
+  if (!rateLimit(req)) {
+    return rateLimitResponse();
+  }
+
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");

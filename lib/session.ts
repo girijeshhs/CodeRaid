@@ -17,11 +17,14 @@ export const requireUserId = async (): Promise<string> => {
 
 export const setSessionUserId = async (userId: string) => {
   const store = await cookies();
+  const isProduction = process.env.NODE_ENV === "production";
+  
   store.set(COOKIE_KEY, userId, {
     path: "/",
     httpOnly: true,
+    secure: isProduction,
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 30,
+    maxAge: 60 * 60 * 24 * 30, // 30 days
   });
 };
 

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireUserId } from "@/lib/session";
-import styles from "./weekly.module.css";
 import { redirect } from "next/navigation";
+import { EmptyState } from "../components/empty-state";
 
 const WEEK_SIZE = 7;
 
@@ -65,9 +65,14 @@ export default async function WeeklyProgressPage() {
 
   if (!membership) {
     return (
-      <div className={styles.wrapper}>
-        <h1 className={styles.title}>Weekly progress</h1>
-        <p className={styles.subtle}>Join a party to compare weekly progress.</p>
+      <div className="mx-auto max-w-7xl px-8 py-12">
+        <h1 className="mt-1.5 mb-8 text-3xl font-bold tracking-tight text-white">Weekly progress</h1>
+        <EmptyState
+          icon="🎉"
+          title="No party yet"
+          description="Join or create a party to track and compare weekly progress with your coding buddies."
+          action={{ label: "Manage Parties", href: "/party" }}
+        />
       </div>
     );
   }
@@ -96,53 +101,53 @@ export default async function WeeklyProgressPage() {
   });
 
   return (
-    <div className={styles.wrapper}>
-      <header className={styles.header}>
+    <div className="mx-auto max-w-7xl px-8 py-12">
+      <header className="mb-8 flex flex-col items-start justify-between sm:flex-row sm:items-end">
         <div>
-          <div className={styles.partyLabel}>Party</div>
-          <h1 className={styles.title}>{party.name} — Weekly progress</h1>
+          <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">Party</div>
+          <h1 className="mt-1.5 text-3xl font-bold tracking-tight text-white">{party.name} — Weekly progress</h1>
         </div>
-        <div className={styles.subtle}>Last 7 days</div>
+        <div className="text-sm text-zinc-400">Last 7 days</div>
       </header>
 
-      <div className={styles.tableWrap}>
-        <table className={styles.table}>
+      <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 shadow-lg">
+        <table className="w-full border-collapse text-sm">
           <thead>
             <tr>
-              <th>Username</th>
-              <th>Problems solved</th>
-              <th>Difficulty</th>
-              <th>XP gained</th>
-              <th>Streak change</th>
-              <th>Signal</th>
+              <th className="border-b border-zinc-800 bg-zinc-950 px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Username</th>
+              <th className="border-b border-zinc-800 bg-zinc-950 px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Problems solved</th>
+              <th className="border-b border-zinc-800 bg-zinc-950 px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Difficulty</th>
+              <th className="border-b border-zinc-800 bg-zinc-950 px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">XP gained</th>
+              <th className="border-b border-zinc-800 bg-zinc-950 px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Streak change</th>
+              <th className="border-b border-zinc-800 bg-zinc-950 px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Signal</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id}>
-                <td>{row.handle}</td>
-                <td className="mono">{row.totals.total}</td>
-                <td className={styles.diffCol}>
+              <tr key={row.id} className="group transition-colors hover:bg-zinc-800/50">
+                <td className="border-b border-zinc-800 px-5 py-5 text-zinc-300 last:border-b-0">{row.handle}</td>
+                <td className="border-b border-zinc-800 px-5 py-5 font-mono text-zinc-300 last:border-b-0">{row.totals.total}</td>
+                <td className="flex gap-3 border-b border-zinc-800 px-5 py-5 font-mono text-zinc-300 last:border-b-0">
                   <span>
-                    E <span className="mono" style={{ color: "var(--easy)" }}>{row.totals.easy}</span>
+                    E <span className="font-mono font-semibold text-emerald-500">{row.totals.easy}</span>
                   </span>
                   <span>
-                    M <span className="mono" style={{ color: "var(--medium)" }}>{row.totals.medium}</span>
+                    M <span className="font-mono font-semibold text-amber-500">{row.totals.medium}</span>
                   </span>
                   <span>
-                    H <span className="mono" style={{ color: "var(--hard)" }}>{row.totals.hard}</span>
+                    H <span className="font-mono font-semibold text-red-500">{row.totals.hard}</span>
                   </span>
                 </td>
-                <td className="mono">{row.totals.xp}</td>
-                <td className="mono">{row.streakChange >= 0 ? `+${row.streakChange}` : row.streakChange}</td>
-                <td>
+                <td className="border-b border-zinc-800 px-5 py-5 font-mono text-zinc-300 last:border-b-0">{row.totals.xp}</td>
+                <td className="border-b border-zinc-800 px-5 py-5 font-mono text-zinc-300 last:border-b-0">{row.streakChange >= 0 ? `+${row.streakChange}` : row.streakChange}</td>
+                <td className="border-b border-zinc-800 px-5 py-5 text-zinc-300 last:border-b-0">
                   <span
                     className={
                       row.trend === "Improving"
-                        ? styles.improving
+                        ? "font-semibold text-emerald-500"
                         : row.trend === "Declining"
-                        ? styles.declining
-                        : styles.stable
+                        ? "font-semibold text-red-500"
+                        : "font-medium text-zinc-500"
                     }
                   >
                     {row.trend}

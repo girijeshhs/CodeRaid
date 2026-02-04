@@ -1,19 +1,26 @@
 'use client';
 
 import { useFormStatus } from "react-dom";
+import { Button } from "./button";
+import { ButtonHTMLAttributes } from "react";
 
-type SubmitButtonProps = {
-  children: React.ReactNode;
-  className?: string;
+type SubmitButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   loadingText?: string;
+  variant?: "primary" | "secondary" | "danger" | "ghost";
 };
 
-export function SubmitButton({ children, className, loadingText = "Loading..." }: SubmitButtonProps) {
+export function SubmitButton({ children, loadingText = "Loading...", variant = "primary", ...props }: SubmitButtonProps) {
   const { pending } = useFormStatus();
 
   return (
-    <button type="submit" className={className} disabled={pending}>
-      {pending ? loadingText : children}
-    </button>
+    <Button
+      type="submit"
+      isLoading={pending}
+      loadingText={loadingText}
+      variant={variant}
+      {...props}
+    >
+      {children}
+    </Button>
   );
 }

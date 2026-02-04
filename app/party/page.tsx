@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { requireUserId } from "@/lib/session";
-import { createPartyAction, joinPartyAction } from "../actions";
 import styles from "./party.module.css";
+import CreatePartyForm from "./create-party-form";
+import JoinPartyForm from "./join-party-form";
 
 export default async function PartyPage() {
   const userId = await requireUserId();
@@ -17,29 +18,12 @@ export default async function PartyPage() {
 
       <div className={styles.card}>
         <h3>Create a party</h3>
-        <form className={styles.formRow} action={createPartyAction}>
-          <input name="name" placeholder="Party name" className={styles.input} required />
-          <input name="description" placeholder="Description (optional)" className={styles.input} />
-          <textarea 
-            name="userHandles" 
-            placeholder="User handles to add (comma-separated, e.g. user1, user2, user3)" 
-            className={styles.textarea}
-            rows={3}
-          />
-          <button type="submit" className={styles.button}>
-            Create
-          </button>
-        </form>
+        <CreatePartyForm />
       </div>
 
       <div className={styles.card}>
         <h3>Join with invite code</h3>
-        <form className={styles.formRow} action={joinPartyAction}>
-          <input name="code" placeholder="Invite code" className={styles.input} required />
-          <button type="submit" className={styles.button}>
-            Join
-          </button>
-        </form>
+        <JoinPartyForm />
       </div>
 
       <div className={styles.card}>

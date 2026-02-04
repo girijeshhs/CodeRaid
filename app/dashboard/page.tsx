@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireUserId } from "@/lib/session";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import PartyOverview from "./party-overview";
 
 const WEEK_SIZE = 7;
@@ -71,7 +72,7 @@ export default async function DashboardPage() {
       <div style={{ padding: "48px 24px" }}>
         <h1 style={{ fontSize: "20px", marginBottom: "8px" }}>No party yet</h1>
         <p style={{ color: "var(--text-secondary)" }}>
-          Create or join a party to see the overview.
+          <Link href="/party" style={{ textDecoration: "underline" }}>Create or join a party</Link> to see the overview.
         </p>
       </div>
     );

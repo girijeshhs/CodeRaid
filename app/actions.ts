@@ -22,7 +22,7 @@ const partySchema = z.object({
   description: z.string().trim().max(200).optional(),
 });
 
-export async function onboardAction(formData: FormData) {
+export async function onboardAction(prevState: any, formData: FormData) {
   const parsed = handleSchema.safeParse({
     handle: formData.get("handle"),
     email: formData.get("email") || undefined,
@@ -45,7 +45,7 @@ export async function onboardAction(formData: FormData) {
   redirect("/dashboard");
 }
 
-export async function completeOnboardingAction(formData: FormData) {
+export async function completeOnboardingAction(prevState: any, formData: FormData) {
   const parsed = handleSchema.safeParse({
     handle: formData.get("handle"),
     email: undefined,
@@ -108,7 +108,7 @@ export async function simulateSnapshotAction() {
   redirect("/dashboard");
 }
 
-export async function createPartyAction(formData: FormData) {
+export async function createPartyAction(prevState: any, formData: FormData) {
   const userId = await requireUserId();
   const parsed = partySchema.safeParse({
     name: formData.get("name"),
@@ -164,7 +164,7 @@ export async function createPartyAction(formData: FormData) {
   redirect("/party");
 }
 
-export async function joinPartyAction(formData: FormData) {
+export async function joinPartyAction(prevState: any, formData: FormData) {
   const userId = await requireUserId();
   const code = (formData.get("code") || "").toString().trim();
   if (!code) return { ok: false, error: "Invite code required." };
@@ -190,7 +190,7 @@ export async function joinPartyAction(formData: FormData) {
   redirect("/party");
 }
 
-export async function updateHandleAction(formData: FormData) {
+export async function updateHandleAction(prevState: any, formData: FormData) {
   const userId = await requireUserId();
   const parsed = handleSchema.safeParse({
     handle: formData.get("handle"),

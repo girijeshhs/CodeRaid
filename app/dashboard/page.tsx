@@ -76,38 +76,54 @@ export default async function DashboardPage() {
       <div className={styles.mainGrid}>
         {/* Left column: Solved Problems + Recent Activity */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div className={styles.card}>
-            <div className={styles.cardTitle}>Solved Problems</div>
-            <div className={styles.progressList}>
-              <div className={styles.progressRow}>
-                <div className={styles.diffLabel} style={{ color: "var(--easy)" }}>Easy</div>
-                <div className={styles.barTrack}>
-                  <div
-                    className={`${styles.barFill} ${styles.barEasy}`}
-                    style={{ width: totals.total ? `${(totals.easy / totals.total) * 100}%` : "0%" }}
-                  />
+          <div className={styles.solvedSection}>
+            <div className={styles.solvedHeader}>
+              <div className={styles.totalSolved}>
+                <div className="mono" style={{ fontSize: "32px", fontWeight: "600", color: "var(--text)" }}>
+                  {totals.total}
                 </div>
-                <div className="mono">{totals.easy}</div>
+                <div style={{ fontSize: "13px", color: "var(--text-secondary)" }}>Solved</div>
               </div>
-              <div className={styles.progressRow}>
-                <div className={styles.diffLabel} style={{ color: "var(--medium)" }}>Medium</div>
-                <div className={styles.barTrack}>
+            </div>
+            <div className={styles.difficultyBreakdown}>
+              <div className={styles.diffRow}>
+                <span style={{ fontSize: "13px", color: "rgba(0, 184, 163, 0.6)" }}>Easy</span>
+                <div className={styles.thinBar}>
                   <div
-                    className={`${styles.barFill} ${styles.barMedium}`}
-                    style={{ width: totals.total ? `${(totals.medium / totals.total) * 100}%` : "0%" }}
+                    className={styles.thinBarFill}
+                    style={{ 
+                      width: totals.total ? `${(totals.easy / totals.total) * 100}%` : "0%",
+                      background: "rgba(0, 184, 163, 0.6)"
+                    }}
                   />
                 </div>
-                <div className="mono">{totals.medium}</div>
+                <span className="mono" style={{ fontSize: "13px", color: "var(--text)" }}>{totals.easy}</span>
               </div>
-              <div className={styles.progressRow}>
-                <div className={styles.diffLabel} style={{ color: "var(--hard)" }}>Hard</div>
-                <div className={styles.barTrack}>
+              <div className={styles.diffRow}>
+                <span style={{ fontSize: "13px", color: "rgba(255, 192, 30, 0.6)" }}>Medium</span>
+                <div className={styles.thinBar}>
                   <div
-                    className={`${styles.barFill} ${styles.barHard}`}
-                    style={{ width: totals.total ? `${(totals.hard / totals.total) * 100}%` : "0%" }}
+                    className={styles.thinBarFill}
+                    style={{ 
+                      width: totals.total ? `${(totals.medium / totals.total) * 100}%` : "0%",
+                      background: "rgba(255, 192, 30, 0.6)"
+                    }}
                   />
                 </div>
-                <div className="mono">{totals.hard}</div>
+                <span className="mono" style={{ fontSize: "13px", color: "var(--text)" }}>{totals.medium}</span>
+              </div>
+              <div className={styles.diffRow}>
+                <span style={{ fontSize: "13px", color: "rgba(239, 71, 67, 0.6)" }}>Hard</span>
+                <div className={styles.thinBar}>
+                  <div
+                    className={styles.thinBarFill}
+                    style={{ 
+                      width: totals.total ? `${(totals.hard / totals.total) * 100}%` : "0%",
+                      background: "rgba(239, 71, 67, 0.6)"
+                    }}
+                  />
+                </div>
+                <span className="mono" style={{ fontSize: "13px", color: "var(--text)" }}>{totals.hard}</span>
               </div>
             </div>
           </div>
